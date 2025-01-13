@@ -8,6 +8,17 @@ Home
 
 
 {% block body_block %}
-<h1> I am a blog list </h1>
+
+{% for blog in blogs %}
+
+<div style="padding-bottom: 20px;">
+    <h2><a href="#">{{ blog.blog_title }}</a></h2>
+    <h6> by {{ blog.author.username }} on {{ blog.publish_date }} 
+        {% if blog.publish_date != blog.update_date %}, modified on {{ blog.update_date }}{% endif %} </h6>
+    
+
+</div>
+
+{% endfor %}
 
 {% endblock %}

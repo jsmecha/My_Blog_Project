@@ -18,8 +18,8 @@
               <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
               
               {% if user.is_authenticated %}
-              
-              <div class="nav-item dropdown">
+              <a class="nav-link active" href="{% url 'app_blog:create_blog' %}">Write Blog</a>
+              <div class="nav-item dropdow active">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   {{user.username}}
                 </a>
@@ -30,14 +30,11 @@
               </div>
               
               
-              <a class="nav-link" href="#">Write Blog</a>
-              
-              
               
               {% else %}
               
-              <a class="nav-link" href="{% url 'app_login:signup' %}">Sign Up</a>
-              <a class="nav-link" href="{% url 'app_login:login' %}">Login</a>
+              <a class="nav-link active" href="{% url 'app_login:signup' %}">Sign Up</a>
+              <a class="nav-link active" href="{% url 'app_login:login' %}">Login</a>
               
               {% endif %}
 
