@@ -37,7 +37,7 @@ Login
 <br>
 
 <p>Do you have no account? <a href="{% url 'app_login:signup' %}">Sign up</a></p>
-<p>Do you forget password? <a href="#">Forget password</a></p>
+<p>Do you forget password? <a href="{% url 'app_login:reset_password' %}">Forget password</a></p>
 
 {% endif %}
 

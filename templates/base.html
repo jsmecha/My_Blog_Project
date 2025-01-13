@@ -18,9 +18,20 @@
               <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
               
               {% if user.is_authenticated %}
-              <span class="nav-link">Logged in by {{ user.username }}</span>
-              <a class="nav-link" href="{% url 'app_login:profile' %}">Profile</a>
-              <a class="nav-link" href="{% url 'app_login:logout' %}">Logout</a>
+              
+              <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  {{user.username}}
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'app_login:profile' %}">Your Profile</a></li>
+                  <li><a class="dropdown-item" href="{% url 'app_login:logout' %}">Logout</a></li>                  
+                </ul>
+              </div>
+              
+              
+              <a class="nav-link" href="#">Write Blog</a>
+              
               
               
               {% else %}
@@ -29,6 +40,10 @@
               <a class="nav-link" href="{% url 'app_login:login' %}">Login</a>
               
               {% endif %}
+
+
+              
+
             
             </div>
           </div>

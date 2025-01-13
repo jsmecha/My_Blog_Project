@@ -1,10 +1,16 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from .forms import SignUpForm, UserProfileChangeForm
+
+from .forms import SignUpForm, UserProfileChangeForm, ProfilePic, ResetPasswordForm
  
 
 
@@ -81,3 +87,67 @@ def password_change(request):
             return redirect('app_login:login')
         
     return render(request, 'App_Login/pass_change.html', context={'form':form})
+
+
+@login_required
+def add_profile_pic(request):    
+    form = ProfilePic()
+    if request.method == 'POST':
+        form = ProfilePic(request.POST, request.FILES)
+        if form.is_valid():
+            user_obj = form.save(commit=False)
+            user_obj.user = request.user
+            user_obj.save()
+            messages.success(request, "Profile Picture Added Successfully.")
+            return redirect('app_login:profile')
+
+
+    return render(request, 'App_Login/pro_pic_add.html', context={'form':form})
+
+
+@login_required
+def change_profile_pic(request):
+    form = ProfilePic(instance=request.user.user_profile)
+    if request.method == 'POST':
+        form = ProfilePic(request.POST, request.FILES, instance=request.user.user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('app_login:profile')
+
+
+    return render(request, 'App_Login/pro_pic_add.html', context={'form':form})
+
+
+def reset_password(request):
+    form = ResetPasswordForm()
+    if request.method == 'POST':
+        form = ResetPasswordForm(request.POST)
+        if form.is_valid():
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            
+            try:
+                user = User.objects.get(first_name=first_name, last_name=last_name,
+                                        username=username, email=email)
+                if user:
+                    if user.is_active:
+                        token = default_token_generator.make_token(user)
+                        uidb64 = urlsafe_base64_encode(force_bytes(user.id))
+                        return redirect('app_login:reset_password_confirm', uidb64=uidb64, token=token)
+                    else:
+                        messages.error(request, "This user is not active.")
+                else:
+                    messages.error(request, "No user found with the provided informations.")
+                    
+            except:        
+                messages.error(request, "No user found with the provided informations.")
+
+    return render(request, 'App_Login/password_reset_form.html', context = {'form':form})
+        
+
+class CustomPasswordResetComfirmView(PasswordResetConfirmView):
+    template_name = 'App_Login/password_reset_complete.html'
+    success_url = reverse_lazy('app_login:password_reset_comoplete')
+
