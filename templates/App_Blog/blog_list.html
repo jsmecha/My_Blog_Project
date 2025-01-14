@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load custom_filters %}
 <!-- {% load static %} -->
 
 {% block title %}
@@ -11,10 +11,25 @@ Home
 
 {% for blog in blogs %}
 
-<div style="padding-bottom: 20px;">
-    <h2><a href="#">{{ blog.blog_title }}</a></h2>
-    <h6> by {{ blog.author.username }} on {{ blog.publish_date }} 
-        {% if blog.publish_date != blog.update_date %}, modified on {{ blog.update_date }}{% endif %} </h6>
+<h3>{{ blog.blog_title }}</h3>
+<h6><i>{{ blog.publish_date }} 
+    {% if blog.publish_date != blog.update_date %}, modified on {{ blog.update_date }}{% endif %} 
+</i></h6>
+
+<div class="row" style="padding-bottom: 20px;">
+    <div class="col-sm-4">
+        <img src="/media/{{blog.blog_image}}" alt="{{blog.blog_title}}" title="{{blog.blog_title}}" width="100%">
+    </div>
+        
+    
+    <div class="col-sm-8">
+       <p>{{ blog.blog_content | range_filter  | linebreaks }} 
+        <a href="{% url 'app_blog:blog_detail' slug=blog.slug %}">Read more</a>
+       </p><!--linkbreaks : 줄바꿈 해주는 필터. 이거 추가 안하면 하나의 paragraph 처럼 출력됨-->
+       <h6>Posted by <a href="#">{{ blog.author.username }}</a></h6>
+       <h6>{{ blog.liked_blog.count }} Likes | {{ blog.blog_comment.count }} Comments</h6>
+       
+    </div>
     
 
 </div>

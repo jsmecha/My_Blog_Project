@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView, UpdateView, DeleteView, ListView, DetailView, TemplateView
 from .models import Blog, Comment, Likes
+from .forms import CommentForm
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.decorators import login_required #for def function
 from django.contrib.auth.mixins import LoginRequiredMixin #for class view
@@ -29,7 +30,6 @@ class CreateBlog(CreateView, LoginRequiredMixin):
         blog_obj.save()
         return redirect('index')
         
-        
 
 
 class UpdateBLog(UpdateView, LoginRequiredMixin):
@@ -37,3 +37,52 @@ class UpdateBLog(UpdateView, LoginRequiredMixin):
     fields = '__all__'
     template_name = 'App_Blog/edit_blog.html'
     
+
+
+def blog_detail(request, slug):
+    blog = Blog.objects.get(slug=slug)    
+    comment_form = CommentForm()
+    liked = False
+    
+    if request.user.is_authenticated:       
+        already_liked = Likes.objects.filter(blog=blog, user=request.user)
+        if already_liked:
+            liked = True
+        
+
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment_obj = comment_form.save(commit=False)
+            comment_obj.user = request.user
+            comment_obj.blog = blog
+            comment_obj.save()
+            return redirect('app_blog:blog_detail', slug=slug)
+
+
+    return render(request, 'App_Blog/blog_details.html', context={'blog':blog, 'comment_form':comment_form, 'liked':liked})
+
+
+
+@login_required
+def liked(request, pk):
+    blog = Blog.objects.get(pk=pk)
+    user = request.user
+    already_liked = Likes.objects.filter(blog=blog, user=user)
+
+    if not already_liked:
+        liked_post = Likes(blog=blog, user=user)
+        liked_post.save()
+    
+    return redirect('app_blog:blog_detail', slug=blog.slug)
+    
+
+@login_required
+def unliked(request, pk):
+    blog = Blog.objects.get(pk=pk)
+    user = request.user
+    already_liked = Likes.objects.filter(blog=blog, user=user)
+    if already_liked:
+        already_liked.delete()
+
+    return redirect('app_blog:blog_detail', slug=blog.slug)

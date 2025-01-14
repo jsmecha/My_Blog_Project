@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 <!-- {% load static %} -->
 
@@ -8,6 +9,61 @@ Blog Details
 
 
 {% block body_block %}
-<h1> BLog Details page </h1>
+<div class="row">
+    <div class="col-sm-8">
+        <h2>{{ blog.blog_title}}</h2>
+        <h4>Posted by {{blog.author}}</h4>
+        <i><h6>Published on {{ blog.publish_date}} </h6></i>
+        <i><h6>Updated on {{ blog.update_date }}</h6></i>
+        <h6>{{ blog.liked_blog.count }} Likes | {{ blog.blog_comment.count }} Comments</h6>
+    </div>
 
+    <div class="col-sm-4" style="padding-bottom: 20px;">
+        <img src="/media/{{ blog.blog_image }}" width="100%">
+    </div>
+    {{ blog.blog_content | linebreaks }}
+</div>
+
+
+<!-- <a href="{% url 'index'%}" class="btn btn-primary btn-sm">Go Home</a>
+<a href="#" class="btn btn-primary btn-sm">Edit Blog</a> -->
+
+
+<hr>
+{% if user.is_authenticated %}
+    {% if not liked %}
+    <a href="{% url 'app_blog:liked' pk=blog.pk %}" class="btn btn-primary btn-sm" style="margin-right: 1em;">
+        <i class="bi bi-hand-thumbs-up"></i>
+    </a>
+    {% else %}
+    <a href="{% url 'app_blog:unliked' pk=blog.pk %}" class="btn btn-primary btn-sm">
+        <i class="bi bi-hand-thumbs-up-fill"></i>
+    </a>
+    {% endif %}
+{% endif %}
+
+<div class = "row" style="padding-top: 20px;">
+    <div class="col-sm-6">
+        <h5>Comments:</h5>        
+        
+        {% for comment in blog.blog_comment.all %}
+            <p><a href="#">{{comment.user}}</a><br>
+            <B>{{ comment.comment }}</B><br>
+            <i>{{ comment.comment_date }}</i></p>
+        {% endfor %}        
+        
+    </div>
+    
+    <div class="col-sm-6">
+        {% if user.is_authenticated %}
+        <form method="POST">
+            {% csrf_token%}
+            {{ comment_form | crispy }}
+            <button type="submit" class="btn btn-primary btn-sm">Comment</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<br><br><br>
 {% endblock %}

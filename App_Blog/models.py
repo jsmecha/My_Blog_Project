@@ -29,7 +29,7 @@ class Comment(models.Model):
 
 
     class Meta:
-        ordering = ['-publish_date'] #이런 식으로 ordering을 fix 하는 방법도 있음. views.py에서 하거나 여기서 하거나.
+        ordering = ['-comment_date'] #이런 식으로 ordering을 fix 하는 방법도 있음. views.py에서 하거나 여기서 하거나.
 
     def __str__(self):
         return self.comment
