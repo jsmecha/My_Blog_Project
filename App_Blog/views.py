@@ -8,6 +8,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin #for class view
 import uuid
 
 
+
+class MyBlogs(TemplateView, LoginRequiredMixin):
+    template_name = 'App_Blog/my_blogs.html'
+
+
+
 class BlogList(ListView):
     context_object_name = 'blogs'
     model = Blog
@@ -15,8 +21,7 @@ class BlogList(ListView):
     #queryset = Blog.objects.order_by('-publish_date') #-publish_date : descending order
 
 
-class CreateBlog(CreateView, LoginRequiredMixin):
-    
+class CreateBlog(CreateView, LoginRequiredMixin):    
     model = Blog
     fields = ('blog_title','blog_content', 'blog_image')
     template_name = 'App_Blog/create_blog.html'
@@ -34,8 +39,17 @@ class CreateBlog(CreateView, LoginRequiredMixin):
 
 class UpdateBLog(UpdateView, LoginRequiredMixin):
     model = Blog
-    fields = '__all__'
+    fields = ('blog_title','blog_content', 'blog_image')
     template_name = 'App_Blog/edit_blog.html'
+    
+    def get_success_url(self, **kwargs):
+        return reverse_lazy('app_blog:blog_detail', kwargs={'slug':self.object.slug})
+
+   
+
+
+
+
     
 
 

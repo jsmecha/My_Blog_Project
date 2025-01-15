@@ -1,13 +1,44 @@
 {% extends 'base.html' %}
-
+{% load custom_filters %}
 <!-- {% load static %} -->
 
 {% block title %}
-My Blog
+My Recipes
 {% endblock %}
 
 
 {% block body_block %}
-<h1> My blog page</h1>
+
+
+{% if user.post_author.all.count == 0 %}
+    <h3>No recipe by {{ user.username }}</h3>
+
+{% else %}
+
+    {% for blog in user.post_author.all %}
+
+    <h3>{{ blog.blog_title }}</h3>
+    <h6>{{ blog.publish_date }}</h6>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <img src="/media/{{blog.blog_image}}" width="100%">
+        </div>
+
+        <div class="col-sm-8">
+            <p>{{ blog.blog_content | range_filter  | linebreaks }} 
+            <a href="{% url 'app_blog:blog_detail' slug=blog.slug %}">Read more</a>
+            
+            </p><!--linkbreaks : 줄바꿈 해주는 필터. 이거 추가 안하면 하나의 paragraph 처럼 출력됨-->
+            <h6>{{ blog.liked_blog.count }} Likes | {{ blog.blog_comment.count }} Comments    </h6>
+            <a href="{% url 'app_blog:edit_blog' pk=blog.pk %}" class="btn btn-info btn-sm" style="margin-right: 1em;">Edit</a>
+            <a href="#" class="btn btn-danger btn-sm">Delete</a>
+
+        </div>
+    </div>
+    <hr>
+    
+    {% endfor %}
+{% endif %}
 
 {% endblock %}
