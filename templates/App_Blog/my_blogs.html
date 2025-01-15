@@ -32,7 +32,7 @@ My Recipes
             </p><!--linkbreaks : 줄바꿈 해주는 필터. 이거 추가 안하면 하나의 paragraph 처럼 출력됨-->
             <h6>{{ blog.liked_blog.count }} Likes | {{ blog.blog_comment.count }} Comments    </h6>
             <a href="{% url 'app_blog:edit_blog' pk=blog.pk %}" class="btn btn-info btn-sm" style="margin-right: 1em;">Edit</a>
-            <a href="#" class="btn btn-danger btn-sm">Delete</a>
+            <a href="{% url 'app_blog:delete_blog' pk=blog.pk %}" class="btn btn-danger btn-sm">Delete</a>
 
         </div>
     </div>

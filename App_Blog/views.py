@@ -47,7 +47,12 @@ class UpdateBLog(UpdateView, LoginRequiredMixin):
 
    
 
-
+class DeleteBlog(DeleteView, LoginRequiredMixin):
+    model = Blog
+    template_name = 'App_Blog/delete_confirm.html'
+    success_url=reverse_lazy('index')
+    
+    
 
 
     

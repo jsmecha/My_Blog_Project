@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+<!-- {% load static %} -->
+
+{% block title %}
+Delete Recipe
+{% endblock %}
+
+
+{% block body_block %}
+<h3>Are you sure you want to delete this recipe?</h3>
+<p> {{ object.blog_title }}</p>
+
+<form method="POST">
+    {% csrf_token %}    
+    <button type="submit" class="btn btn-primary btn-sm">Confirm</button>
+    <a href="{% url 'index' %}" class="btn btn-secondary btn-sm">Cancel</a>
+</form>
+
+{% endblock %}

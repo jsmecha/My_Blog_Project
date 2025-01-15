@@ -18,12 +18,16 @@ Home
 
 <div class="row" style="padding-bottom: 20px;">
     <div class="col-sm-4">
-        <img src="/media/{{blog.blog_image}}" alt="{{blog.blog_title}}" title="{{blog.blog_title}}" width="100%">
+        <div class="image-container">
+            <img src="/media/{{blog.blog_image}}" alt="{{blog.blog_title}}" title="{{blog.blog_title}}" width="100%">
+        </div>
     </div>
-        
     
     <div class="col-sm-8">
-       <p>{{ blog.blog_content | range_filter  | linebreaks }} 
+        <div class="text-container">
+            {{ blog.blog_content | linebreaks }} 
+        </div>
+       <p>
         <a href="{% url 'app_blog:blog_detail' slug=blog.slug %}">Read more</a>
        </p><!--linkbreaks : 줄바꿈 해주는 필터. 이거 추가 안하면 하나의 paragraph 처럼 출력됨-->
        <h6>Posted by <a href="#">{{ blog.author.username }}</a></h6>
